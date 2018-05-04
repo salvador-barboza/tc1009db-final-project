@@ -1,117 +1,132 @@
-# CREATE DATABASE hospital;
-BEGIN;
+CREATE DATABASE hospital;
+START TRANSACTION;
 USE hospital;
+
+CREATE TABLE Alergies (
+  paciente_id INT,
+  alergen_id  INT,
+  PRIMARY KEY (paciente_id, alergen_id),
+  FOREIGN KEY (paciente_id) REFERENCES Paciente.paciente_id,
+  FOREIGN KEY (alergen_id) REFERENCES Alergen.alergen_id
+);
+
 CREATE TABLE Paciente (
-  Id              INT,
-  Nombre          TEXT,
-  fechaNacimiento DATE,
-  PRIMARY KEY (id)
+  paciente_id INT,
+  first_name  TEXT,
+  last_name   TEXT,
+  gender      CHAR,
+  birth_date  DATE,
+  blood_type  TEXT,
+  main_addr   TEXT,
+  phone_num   TEXT,
+  email       TEXT,
+  PRIMARY KEY (paciente_id)
 );
 
 CREATE TABLE Doctor (
-  id     INT,
-  nombre TEXT,
-  PRIMARY KEY (id)
+  doctor_id   INT,
+  first_name  TEXT,
+  last_name   TEXT,
+  licence_num TEXT,
+  office_num  TEXT,
+  phone_num   TEXT,
+  email       TEXT,
+  PRIMARY KEY (doctor_id)
 );
 
-
-CREATE TABLE Prueba (
-  id          INT,
-  descripcion TEXT,
-  PRIMARY KEY (id)
+CREATE TABLE Test (
+  test_id          INT,
+  test_name TEXT,
+  PRIMARY KEY (test_id)
 );
 
-
-CREATE TABLE PreguntasPrueba (
-  id             INT,
-  pruebaId       INT,
-  numeroPregunta INT,
-  textoPregunta  TEXT,
-  ayudaPregunta  TEXT,
-  PRIMARY KEY (id),
-  FOREIGN KEY (pruebaId) REFERENCES Prueba (id)
+CREATE TABLE TestQuestion (
+  question_id INT,
+  test_id       INT,
+  question_index INT,
+  prompt TEXT,
+  hint  TEXT,
+  PRIMARY KEY (question_id),
+  FOREIGN KEY (prueba_id) REFERENCES Prueba (prueba_id)
 );
 
-
-CREATE TABLE InstanciaPrueba (
-  id       INT,
-  fecha    DATE,
-  total    INT,
-  pruebaId INT,
-  PRIMARY KEY (id),
-  FOREIGN KEY (pruebaId) REFERENCES Prueba (id)
+CREATE TABLE TestResult (
+  test_result_id INT,
+  submition_date    DATE,
+  test_id INT,
+  PRIMARY KEY (test_result_id),
+  FOREIGN KEY (test_id) REFERENCES Test(test_id)
 );
 
-
-CREATE TABLE Respuestas (
-  preguntaId        INT,
-  instanciaPruebaId INT,
-  valor             INT,
-  respuestaId       INT NOT NULL UNIQUE,
-  PRIMARY KEY (respuestaId),
-  FOREIGN KEY (preguntaId) REFERENCES PreguntasPrueba (id),
-  FOREIGN KEY (instanciaPruebaId) REFERENCES InstanciaPrueba (id)
+CREATE TABLE TestResultAnswer (
+  answer_id INT,
+  question_id        INT,
+  test_result_id INT,
+  value INT,
+  PRIMARY KEY (answer_id),
+  FOREIGN KEY (question_id) REFERENCES TestQuestion (quuestion_id),
+  FOREIGN KEY (test_result_id) REFERENCES TestResult (test_result_id)
 );
-
 
 CREATE TABLE Medicamento (
-  id                INT,
-  nombre            TEXT,
-  ingredienteActivo TEXT,
+  medicamento_id                INT,
+  nombre TEXT,
+  ingrediente_activo TEXT,
   laboratorio       TEXT,
   presentacion      TEXT,
-  PRIMARY KEY (id)
+  PRIMARY KEY (medicamento_id)
 );
 
 
-CREATE TABLE RecetaMedica (
-  id            INT,
+CREATE TABLE Prescription (
+  receta_id            INT,
   instrucciones TEXT,
   dias          INT,
   frecuencia    INT,
   dosis         NUMERIC,
-  PRIMARY KEY (id)
+  PRIMARY KEY (receta_id)
 );
 
 
 CREATE TABLE MedicamentosPorReceta (
-  idMedicamento INT,
-  idReceta      INT,
-  PRIMARY KEY (idMedicamento, idReceta),
-  FOREIGN KEY (idReceta) REFERENCES RecetaMedica (id),
-  FOREIGN KEY (idMedicamento) REFERENCES Medicamento (id)
+  id_medicamento INT,
+  id_receta      INT,
+  PRIMARY KEY (id_receta, id_medicamento),
+  FOREIGN KEY (id_receta) REFERENCES RecetaMedica (receta_id),
+  FOREIGN KEY (id_medicamento) REFERENCES Medicamento (medicamento_id)
 );
 
 CREATE TABLE Consulta (
-  id                INT,
-  fecha             DATE,
-  notaClinica       TEXT,
+  consulta_id                INT,
+  consulta_date DATE,
+  motivo            TEXT,
+  nota_clinica       TEXT,
   peso              NUMERIC,
   estatura          NUMERIC,
-  doctorId          INT,
-  pacienteId        INT,
-  instanciaPruebaId INT,
-  recetaId          INT,
-  PRIMARY KEY (id),
-  FOREIGN KEY (doctorId) REFERENCES Doctor (id),
-  FOREIGN KEY (pacienteId) REFERENCES Paciente (id),
-  FOREIGN KEY (instanciaPruebaId) REFERENCES InstanciaPrueba (id),
-  FOREIGN KEY (recetaId) REFERENCES RecetaMedica (id)
+  doctor_id INT,
+  paciente_id        INT,
+  test_result_id INT,
+  receta_id          INT,
+  PRIMARY KEY (consulta_id),
+  FOREIGN KEY (doctor_id) REFERENCES Doctor (doctor_id),
+  FOREIGN KEY (paciente_id) REFERENCES Paciente (paciente_id),
+  FOREIGN KEY (test_result_id) REFERENCES TestResult (test_result_id),
+  FOREIGN KEY (receta_id) REFERENCES RecetaMedica (id)
 );
-CREATE TABLE DMS5 (
-  id              INT,
-  icd9            TEXT,
-  icd10           TEXT,
-  dsm5Descripcion TEXT,
-  PRIMARY KEY (id)
+
+CREATE TABLE DSM5 (
+  dsm5_id              INT,
+  icd9_code            TEXT,
+  icd10_code           TEXT,
+  description TEXT,
+  PRIMARY KEY (dsm5_id)
 );
 
 CREATE TABLE DiagnosticoConsulta (
-  consultaId    INT,
-  diagnosticoId INT,
-  PRIMARY KEY (consultaId, diagnosticoId),
-  FOREIGN KEY (consultaId) REFERENCES Consulta (id),
-  FOREIGN KEY (diagnosticoId) REFERENCES DMS5 (id)
+  consulta_id    INT,
+  dsm5_id INT,
+  PRIMARY KEY (consulta_id, dsm5_id),
+  FOREIGN KEY (consulta_id) REFERENCES Consulta (consulta_id),
+  FOREIGN KEY (dsm5_id) REFERENCES DSM5 (dsm5_id)
 );
-
-COMMIT;
+ROLLBACK;
