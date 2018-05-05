@@ -1,14 +1,6 @@
-CREATE DATABASE hospital;
+# CREATE DATABASE hospital;
 START TRANSACTION;
 USE hospital;
-
-CREATE TABLE Alergies (
-  paciente_id INT,
-  alergen_id  INT,
-  PRIMARY KEY (paciente_id, alergen_id),
-  FOREIGN KEY (paciente_id) REFERENCES Paciente.paciente_id,
-  FOREIGN KEY (alergen_id) REFERENCES Alergen.alergen_id
-);
 
 CREATE TABLE Paciente (
   paciente_id INT,
@@ -47,7 +39,7 @@ CREATE TABLE TestQuestion (
   prompt TEXT,
   hint  TEXT,
   PRIMARY KEY (question_id),
-  FOREIGN KEY (prueba_id) REFERENCES Prueba (prueba_id)
+  FOREIGN KEY (test_id) REFERENCES Test (test_id)
 );
 
 CREATE TABLE TestResult (
@@ -59,13 +51,12 @@ CREATE TABLE TestResult (
 );
 
 CREATE TABLE TestResultAnswer (
-  answer_id INT,
-  question_id        INT,
   test_result_id INT,
-  value INT,
-  PRIMARY KEY (answer_id),
-  FOREIGN KEY (question_id) REFERENCES TestQuestion (quuestion_id),
-  FOREIGN KEY (test_result_id) REFERENCES TestResult (test_result_id)
+  question_id        INT,
+  val INT,
+  PRIMARY KEY (test_result_id, question_id),
+  FOREIGN KEY (test_result_id) REFERENCES TestResult (test_result_id),
+  FOREIGN KEY (question_id) REFERENCES TestQuestion (question_id)
 );
 
 CREATE TABLE Medicamento (
@@ -78,7 +69,7 @@ CREATE TABLE Medicamento (
 );
 
 
-CREATE TABLE Prescription (
+CREATE TABLE RecetaMedica (
   receta_id            INT,
   instrucciones TEXT,
   dias          INT,
@@ -111,7 +102,7 @@ CREATE TABLE Consulta (
   FOREIGN KEY (doctor_id) REFERENCES Doctor (doctor_id),
   FOREIGN KEY (paciente_id) REFERENCES Paciente (paciente_id),
   FOREIGN KEY (test_result_id) REFERENCES TestResult (test_result_id),
-  FOREIGN KEY (receta_id) REFERENCES RecetaMedica (id)
+  FOREIGN KEY (receta_id) REFERENCES RecetaMedica (receta_id)
 );
 
 CREATE TABLE DSM5 (
