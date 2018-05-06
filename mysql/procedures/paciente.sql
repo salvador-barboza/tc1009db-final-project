@@ -1,18 +1,20 @@
-# DROP PROCEDURE IF EXISTS get_diagnosticos_by_name;
-# create procedure get_diagnosticos_by_name(IN name TEXT)
-#   BEGIN
-#     SELECT
-#       C.consulta_date,
-#       D.description
-#     FROM Paciente P
-#       JOIN Consulta C ON C.paciente_id = P.paciente_id
-#       JOIN DiagnosticoConsulta DC ON C.consulta_id = DC.consulta_id
-#       JOIN DSM5 D ON D.dsm5_id = DC.dsm5_id
-#     WHERE CONCAT(P.first_name, ' ', P.last_name) LIKE CONCAT('%', name, '%');
-#     END;
-#   END;
-#
-# call get_diagnosticos_by_name('kri');
+DROP PROCEDURE IF EXISTS get_diagnosticos_by_name;
+create procedure get_diagnosticos_by_name(IN name TEXT)
+BEGIN
+  SELECT
+    CONCAT(P.first_name, ' ', P.last_name) as Nombre,
+    C.consulta_date as 'Fecha de diagnostico',
+    C.nota_clinica as 'Nota Clinica',
+    D.description as 'Descripción',
+    D.dsm5_id AS 'Código DSM5'
+  FROM Paciente P
+    JOIN Consulta C ON C.paciente_id = P.paciente_id
+    JOIN DiagnosticoConsulta DC ON C.consulta_id = DC.consulta_id
+    JOIN DSM5 D ON D.dsm5_id = DC.dsm5_id
+    WHERE CONCAT(P.first_name, ' ', P.last_name) LIKE CONCAT('%', name, '%');
+END;
+
+call get_diagnosticos_by_name('Gor');
 
 
 DROP PROCEDURE IF EXISTS get_historia_by_name;
@@ -95,8 +97,8 @@ BEGIN
     M.presentacion,
     COUNT(M.medicamento_id) as 'Veces recetado',
     CONCAT(
-      FLOOR(TIMESTAMPDIFF(MONTH, min(consulta_date), max(consulta_date)) / 12), ' años ',
-      FLOOR(TIMESTAMPDIFF(MONTH, min(consulta_date), max(consulta_date)) mod 12), ' meses') as 'Tiempo en medicamento'
+      FLOOR(TIMESTAMPDIFF(MONTH, min(consulta_date), CURRENT_DATE()) / 12), ' años ',
+      FLOOR(TIMESTAMPDIFF(MONTH, min(consulta_date), CURRENT_DATE()) mod 12), ' meses') as 'Tiempo en medicamento'
   FROM Paciente P
     JOIN Consulta C on P.paciente_id = C.paciente_id
     JOIN RecetaMedica R on C.receta_id = R.receta_id
@@ -116,11 +118,12 @@ BEGIN
     COUNT(D.doctor_id) as 'Consultas',
     CONCAT(
       'Hace ',
-      FLOOR(TIMESTAMPDIFF(MONTH, min(consulta_date), max(consulta_date)) / 12), ' años ',
-      FLOOR(TIMESTAMPDIFF(MONTH, min(consulta_date), max(consulta_date)) mod 12), ' meses') as 'Atendido desde'
+      FLOOR(TIMESTAMPDIFF(MONTH, min(consulta_date), CURRENT_DATE()) / 12), ' años ',
+      FLOOR(TIMESTAMPDIFF(MONTH, min(consulta_date), CURRENT_DATE()) mod 12), ' meses') as 'Atendido desde'
   FROM Paciente P
     JOIN Consulta C on P.paciente_id = C.paciente_id
     JOIN Doctor D on C.doctor_id = D.doctor_id
   WHERE CONCAT(P.first_name, ' ', P.last_name) LIKE CONCAT('%', name, '%')
   GROUP BY D.doctor_id;
 END;
+

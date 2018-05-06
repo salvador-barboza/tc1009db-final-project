@@ -25,7 +25,9 @@ BEGIN
     (CASE
       WHEN SUM(A.val) > 25 THEN 'Severe Anxiety'
       WHEN SUM(A.val) > 18 THEN 'Moderate Anxiety'
-      WHEN SUM(A.val) > 14 THEN 'Mild Anxiety' END )AS Diagnostic
+      WHEN SUM(A.val) > 14 THEN 'Mild Anxiety'
+      ELSE 'Normal'
+     END )AS Diagnostic
   FROM TestResult T
     JOIN TestResultAnswer A ON T.test_result_id = A.test_result_id
   GROUP BY T.test_result_id
@@ -47,5 +49,3 @@ BEGIN
     WHERE T.test_result_id = testResultId;
 END;
 DELIMETER;
-
-

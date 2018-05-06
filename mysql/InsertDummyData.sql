@@ -114,7 +114,7 @@ insert into MedicamentosPorReceta (id_receta, id_medicamento) values (12, 1);
 insert into MedicamentosPorReceta (id_receta, id_medicamento) values (12, 4);
 insert into MedicamentosPorReceta (id_receta, id_medicamento) values (12, 10);
 insert into MedicamentosPorReceta (id_receta, id_medicamento) values (13, 1);
-insert into MedicamentosPorReceta (id_receta, id_medicamento) values (13, 4);
+insert into MedicamentosPorReceta (id_receta, id_medicamento) values (13, 5);
 insert into MedicamentosPorReceta (id_receta, id_medicamento) values (13, 10);
 insert into MedicamentosPorReceta (id_receta, id_medicamento) values (14, 1);
 insert into MedicamentosPorReceta (id_receta, id_medicamento) values (14, 4);
